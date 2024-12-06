@@ -18,6 +18,7 @@ class AppTheme{
     appBarTheme: _AppBarTheme.myAppBarTheme,
     elevatedButtonTheme: _ElevatedButtonThemeData.myElevatedButtonTheme,
     inputDecorationTheme: _InputDecorationTheme.myInputDecorationTheme,
+    bottomNavigationBarTheme: _BottomNavigationBarThemeData.myBottomNavigationBarThemeData,
   );
 }
 
@@ -117,4 +118,12 @@ class _InputDecorationTheme{
 
   static InputDecorationTheme myInputDecorationTheme = InputDecorationTheme(
       border: OutlineInputBorder());
+}
+
+class _BottomNavigationBarThemeData{
+  _BottomNavigationBarThemeData._();
+
+  static BottomNavigationBarThemeData myBottomNavigationBarThemeData = BottomNavigationBarThemeData(
+    backgroundColor: AppTheme.colorDark1
+  );
 }
