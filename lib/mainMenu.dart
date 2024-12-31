@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'mylib.dart';
 import 'stats.dart';
-import 'programs.dart';
+import 'Programs/programs.dart';
 import 'settings.dart';
 
 class MainMenu extends StatefulWidget{
@@ -40,7 +40,6 @@ class _MainMenuState extends State<MainMenu>{
             BottomNavigationBarItem(icon: Icon(Icons.home),label: "Programs"),
             BottomNavigationBarItem(icon: Icon(Icons.home),label: "Graphs"),
             BottomNavigationBarItem(icon: Icon(Icons.home),label: "Settings"),
-
           ],
       ),
     );
