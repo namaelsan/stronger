@@ -19,6 +19,7 @@ class AppTheme{
     elevatedButtonTheme: _ElevatedButtonThemeData.myElevatedButtonTheme,
     inputDecorationTheme: _InputDecorationTheme.myInputDecorationTheme,
     bottomNavigationBarTheme: _BottomNavigationBarThemeData.myBottomNavigationBarThemeData,
+    cardTheme: _CardTheme.myCardTheme,
   );
 }
 
@@ -103,13 +104,13 @@ class _TextTheme{
     titleMedium: const TextStyle().copyWith(fontSize:  16, fontWeight: FontWeight.w500, color: Colors.white),
     titleSmall: const TextStyle().copyWith(fontSize:  16, fontWeight: FontWeight.w400, color: Colors.white),
 
-    bodyLarge: const TextStyle().copyWith(fontSize:  14, fontWeight: FontWeight.w500, color: Colors.white,),
-    bodyMedium: const TextStyle().copyWith(fontSize:  14, fontWeight: FontWeight.normal, color: Colors.white),
-    bodySmall: const TextStyle().copyWith(fontSize:  14, fontWeight: FontWeight.w500, color: Colors.white.withOpacity(0.5)),
+    bodyLarge: const TextStyle().copyWith(fontSize:  14, fontWeight: FontWeight.w500, color: Colors.black,),
+    bodyMedium: const TextStyle().copyWith(fontSize:  14, fontWeight: FontWeight.normal, color: Colors.black),
+    bodySmall: const TextStyle().copyWith(fontSize:  14, fontWeight: FontWeight.w500, color: Colors.black),
 
     labelLarge: const TextStyle().copyWith(fontSize:  12, fontWeight: FontWeight.normal, color: Colors.white),
     labelMedium: const TextStyle().copyWith(fontSize:  12, fontWeight: FontWeight.normal, color: Colors.white),
-    labelSmall: const TextStyle().copyWith(fontSize:  12, fontWeight: FontWeight.normal, color: Colors.white.withOpacity(0.5)),
+    labelSmall: const TextStyle().copyWith(fontSize:  12, fontWeight: FontWeight.normal, color: Colors.white),
   );
 }
 
@@ -125,5 +126,13 @@ class _BottomNavigationBarThemeData{
 
   static BottomNavigationBarThemeData myBottomNavigationBarThemeData = BottomNavigationBarThemeData(
     backgroundColor: AppTheme.colorDark1
+  );
+}
+
+class _CardTheme{
+  _CardTheme._();
+
+  static CardTheme myCardTheme = CardTheme(
+    color: AppTheme.colorLight2
   );
 }
