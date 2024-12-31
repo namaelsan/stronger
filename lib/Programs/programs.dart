@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'mylib.dart';
+import '../mylib.dart';
+import 'createPrograms.dart';
 
 class ProgramsPage extends StatefulWidget {
   const ProgramsPage({super.key});
@@ -24,34 +25,52 @@ class _ProgramsPageState extends State<ProgramsPage> {
     {"title": "Upper Body Blitz", "movements": 10, "sets": 30},
   ];
 
-
   var templatePrograms = [
-    Program(
-      title: "Beginner program",
-      description: "Start your fitness journey",
-      exercises: [
-        Exercise(title: "Chest Press", sets: [
-          Set(reps: 15, type: "Warmup"),
-          Set(reps: 5,type: "Drop"),
-      ]),]
-    ),
-    Program(
-      title: "Strength Focus",
-      description: "Build power and strength",
-      exercises: [
-        Exercise(title: "Chest Press", sets: [
-          Set(reps: 15, type: "Warmup"),
-          Set(reps: 5,type: "Drop"),
-        ]),]
-    ),
-    Program(
-      title: "Hypertrophy Program",
-      description: "For muscle growth",
-      exercises: [
-        Exercise(title: "Squat", sets: [
-          Set(reps: 15, type: "Warmup")
-        ])]
-    )
+    Program("Beginner program",
+        description: "Start your fitness journey",
+        exercises: [
+          Exercise("Chest Press", sets: [
+            Set(15, "Warmup"),
+            Set(5, "Drop"),
+          ]),
+        ]),
+    Program("Strength Focus",
+        description: "Build power and strength",
+        exercises: [
+          Exercise("Chest Press", sets: [
+            Set(15, "Warmup"),
+            Set(5, "Drop"),
+          ]),
+        ]),
+    Program("Strength Focustemp",
+        description: "Build power and strength",
+        exercises: [
+          Exercise("Chest Press", sets: [
+            Set(15, "Warmup"),
+            Set(5, "Drop"),
+          ]),
+        ]),
+    Program("Strength Focustemp2",
+        description: "Build power and strength",
+        exercises: [
+          Exercise("Chest Press", sets: [
+            Set(15, "Warmup"),
+            Set(5, "Drop"),
+          ]),
+        ]),
+    Program("Strength Focustemp3",
+        description: "Build power and strength",
+        exercises: [
+          Exercise("Chest Press", sets: [
+            Set(15, "Warmup"),
+            Set(5, "Drop"),
+          ]),
+        ]),
+    Program("Hypertrophy Program",
+        description: "For muscle growth",
+        exercises: [
+          Exercise("Squat", sets: [Set(15, "Warmup")])
+        ])
   ];
 
   @override
@@ -70,22 +89,29 @@ class _ProgramsPageState extends State<ProgramsPage> {
               Center(
                 child: Stack(
                   children: [
-                    Text("Your Programs",
-                      style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                        foreground: Paint()
-                          ..style = PaintingStyle.stroke
-                          ..strokeWidth = 7
-                          ..color = AppTheme.colorDark1,
-                      ),
+                    Text(
+                      "Your Programs",
+                      style:
+                          Theme.of(context).textTheme.headlineLarge?.copyWith(
+                                foreground: Paint()
+                                  ..style = PaintingStyle.stroke
+                                  ..strokeWidth = 7
+                                  ..color = AppTheme.colorDark1,
+                              ),
                     ),
-                    Text("Your Programs", style: Theme.of(context).textTheme.headlineLarge,
+                    Text(
+                      "Your Programs",
+                      style: Theme.of(context).textTheme.headlineLarge,
                     ),
                   ],
                 ),
               ),
               SizedBox(height: 20),
               // Template Programs Section
-              Text("Templates", style: Theme.of(context).textTheme.headlineSmall, ),
+              Text(
+                "Templates",
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
               SizedBox(height: 10),
               SizedBox(
                 height: 150,
@@ -104,12 +130,19 @@ class _ProgramsPageState extends State<ProgramsPage> {
                           children: [
                             Text(
                               templatePrograms[index].title,
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(color: Colors.black),
                             ),
                             SizedBox(height: 10),
                             Text(
-                              templatePrograms[index].description ?? "Description here",
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black),
+                              templatePrograms[index].description ??
+                                  "Description here",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(color: Colors.black),
                             ),
                           ],
                         ),
@@ -120,7 +153,10 @@ class _ProgramsPageState extends State<ProgramsPage> {
               ),
               SizedBox(height: 20),
               // User Programs Section
-              Text("Your Programs", style: Theme.of(context).textTheme.headlineSmall,),
+              Text(
+                "Your Programs",
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
               // TODO: CHANGE THIS BUILDER FROM TEMPLATE TO ACTUAL PROGRAMS
               ListView.builder(
                 shrinkWrap: true,
@@ -133,6 +169,14 @@ class _ProgramsPageState extends State<ProgramsPage> {
                       title: Text(templatePrograms[index].title),
                       subtitle: Text(
                           "${templatePrograms[index].getExerciseAmount()} Movements · ${templatePrograms[index].getSetAmount()} Sets"),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CreateProgramsPage(
+                                      program: templatePrograms[index],
+                                    )));
+                      },
                     ),
                   );
                 },
@@ -145,15 +189,13 @@ class _ProgramsPageState extends State<ProgramsPage> {
   }
 }
 
-
-
 // Class representing a Set
 class Set {
   int reps;
   String type;
   int? weight;
 
-  Set({required this.reps, required this.type,this.weight});
+  Set(this.reps, this.type, {this.weight});
 }
 
 // Class representing an Exercise
@@ -161,7 +203,7 @@ class Exercise {
   List<Set>? sets;
   String title;
 
-  Exercise({required this.title,this.sets});
+  Exercise(this.title, {this.sets});
 }
 
 // Class representing a Program
@@ -170,7 +212,7 @@ class Program {
   String? description;
   String title;
 
-  Program({required this.title,this.exercises,this.description});
+  Program(this.title, {this.exercises, this.description});
 
   int getSetAmount() {
     int setAmount = 0;
@@ -182,8 +224,7 @@ class Program {
     return setAmount;
   }
 
-
-  int? getExerciseAmount(){
+  int? getExerciseAmount() {
     return exercises?.length;
   }
 }
