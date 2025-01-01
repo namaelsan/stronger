@@ -7,11 +7,12 @@ class CreateProgramsPage extends StatefulWidget {
   final int index;
   final bool isNew;
 
-  CreateProgramsPage({required this.programs,required this.index,required this.isNew});
+  CreateProgramsPage(
+      {required this.programs, required this.index, required this.isNew});
 
   @override
   State<StatefulWidget> createState() {
-    return _CreateProgramsPageState(programs,index,isNew);
+    return _CreateProgramsPageState(programs, index, isNew);
   }
 }
 
@@ -24,15 +25,15 @@ class _CreateProgramsPageState extends State<CreateProgramsPage> {
   final Map<int, Map<int, TextEditingController>> _setControllers = {};
   late Program program;
 
-  _CreateProgramsPageState(this.programs,this.index,this.isNew);
+  _CreateProgramsPageState(this.programs, this.index, this.isNew);
 
   @override
   void initState() {
     super.initState();
 
-    if(programs.isNotEmpty && index != -1){
+    if (programs.isNotEmpty && index != -1) {
       program = programs[index].copy();
-    }else{
+    } else {
       program = _initProgram();
     }
 
@@ -56,10 +57,9 @@ class _CreateProgramsPageState extends State<CreateProgramsPage> {
   }
 
   Program _initProgram() {
-    Program programTemp = Program("Default Program",
-      exercises: [Exercise("Default Exercise",
-      sets: [Set(0, "Warmup")])]
-    );
+    Program programTemp = Program("Default Program", exercises: [
+      Exercise("Default Exercise", sets: [Set(0, "Warmup")])
+    ]);
 
     return programTemp;
   }
@@ -227,22 +227,40 @@ class _CreateProgramsPageState extends State<CreateProgramsPage> {
                                   ),
                                   SizedBox(width: 10),
 
-                                  // Set Type
+                                  // Set Type Dropdown
                                   Expanded(
-                                    child: TextField(
-                                      decoration: InputDecoration(
-                                        labelText: "Set Type",
-                                      ),
-                                      controller: TextEditingController(
-                                        text: set.type,
-                                      )..selection = TextSelection.collapsed(
-                                          offset: set.type.length,
-                                        ),
-                                      onChanged: (value) {
+                                    child: DropdownButtonFormField<String>(
+                                      value: set.type,
+                                      onChanged: (newValue) {
                                         setState(() {
-                                          set.type = value;
+                                          set.type = newValue!;
                                         });
                                       },
+                                      decoration: InputDecoration(
+                                        labelText: "Set Type",
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(8.0), // Rounded corners
+                                          borderSide: BorderSide(
+                                            color: Colors.grey, // Border color
+                                            width: 1.0, // Border width
+                                          ),
+                                        ),
+                                      ),
+                                      items: [
+                                        DropdownMenuItem<String>(
+                                          value: "Warmup",
+                                          child: Text("Warmup",style: AppTheme.myTheme.textTheme.bodyMedium,),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: "Drop",
+                                          child: Text("Drop",style: AppTheme.myTheme.textTheme.bodyMedium,),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: "Regular",
+                                          child: Text("Regular",style: AppTheme.myTheme.textTheme.bodyMedium,),
+                                        ),
+                                      ],
+                                      hint: Text("Select Type"),
                                     ),
                                   ),
                                   IconButton(
@@ -250,7 +268,9 @@ class _CreateProgramsPageState extends State<CreateProgramsPage> {
                                     onPressed: () =>
                                         removeSet(exerciseIndex, setIndex),
                                   ),
-                                  SizedBox(height: 60,)
+                                  SizedBox(
+                                    height: 60,
+                                  )
                                 ],
                               );
                             },
