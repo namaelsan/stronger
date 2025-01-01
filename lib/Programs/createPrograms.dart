@@ -3,57 +3,71 @@ import 'programs.dart';
 import 'package:stronger/mylib.dart';
 
 class CreateProgramsPage extends StatefulWidget {
-  Program? program;
+  final List<Program> programs;
+  final int index;
+  final bool isNew;
 
-  CreateProgramsPage({this.program});
+  CreateProgramsPage({required this.programs,required this.index,required this.isNew});
 
   @override
   State<StatefulWidget> createState() {
-    return _CreateProgramsPageState(program);
+    return _CreateProgramsPageState(programs,index,isNew);
   }
 }
 
 class _CreateProgramsPageState extends State<CreateProgramsPage> {
-  late Program? program;
+  List<Program> programs;
+  int index;
+  bool isNew;
+
   final Map<int, TextEditingController> _exerciseControllers = {};
   final Map<int, Map<int, TextEditingController>> _setControllers = {};
+  late Program program;
 
-  _CreateProgramsPageState(this.program);
+  _CreateProgramsPageState(this.programs,this.index,this.isNew);
 
   @override
   void initState() {
     super.initState();
 
-    // If no program exists, initialize with a default one
-    program = widget.program ??
-        Program(
-          "New Program",
-          description: "A default program",
-          exercises: [
-            Exercise(
-              "Default Exercise",
-              sets: [Set(10, "Regular")],
-            )
-          ],
-        );
+    if(programs.isNotEmpty && index != -1){
+      program = programs[index].copy();
+    }else{
+      program = _initProgram();
+    }
 
     _initializeControllers();
   }
 
   // Initialize controllers for exercises and sets
   void _initializeControllers() {
-    for (var i = 0; i < (program?.exercises?.length ?? 0); i++) {
+    for (var i = 0; i < (program.exercises?.length ?? 0); i++) {
       _exerciseControllers[i] = TextEditingController(
-        text: program?.exercises![i].title,
+        text: program.exercises![i].title,
       );
 
       _setControllers[i] = {};
-      for (var j = 0; j < (program?.exercises![i].sets?.length ?? 0); j++) {
+      for (var j = 0; j < (program.exercises![i].sets?.length ?? 0); j++) {
         _setControllers[i]![j] = TextEditingController(
-          text: program?.exercises![i].sets![j].reps.toString(),
+          text: program.exercises![i].sets![j].reps.toString(),
         );
       }
     }
+  }
+
+  Program _initProgram() {
+    Program programTemp = Program("Default Program",
+      exercises: [Exercise("Default Exercise",
+      sets: [Set(0, "Warmup")])]
+    );
+
+    return programTemp;
+  }
+
+  // Save the program
+  void _saveProgram() {
+    // Pass the updated program back
+    Navigator.pop(context, program);
   }
 
   // Add an exercise
@@ -63,8 +77,8 @@ class _CreateProgramsPageState extends State<CreateProgramsPage> {
         "New Exercise",
         sets: [Set(10, "Regular")],
       );
-      program?.exercises?.add(newExercise);
-      final index = (program?.exercises?.length ?? 1) - 1;
+      program.exercises?.add(newExercise);
+      final index = (program.exercises?.length ?? 1) - 1;
 
       _exerciseControllers[index] = TextEditingController(
         text: newExercise.title,
@@ -79,8 +93,9 @@ class _CreateProgramsPageState extends State<CreateProgramsPage> {
   void addSet(int exerciseIndex) {
     setState(() {
       final newSet = Set(10, "Regular");
-      program?.exercises?[exerciseIndex].sets?.add(newSet);
-      final setIndex = (program?.exercises?[exerciseIndex].sets?.length ?? 1) - 1;
+      program.exercises?[exerciseIndex].sets?.add(newSet);
+      final setIndex =
+          (program.exercises?[exerciseIndex].sets?.length ?? 1) - 1;
 
       _setControllers[exerciseIndex]?[setIndex] = TextEditingController(
         text: "10",
@@ -91,7 +106,7 @@ class _CreateProgramsPageState extends State<CreateProgramsPage> {
   // Remove an exercise
   void removeExercise(int index) {
     setState(() {
-      program?.exercises?.removeAt(index);
+      program.exercises?.removeAt(index);
       _exerciseControllers.remove(index);
       _setControllers.remove(index);
     });
@@ -100,7 +115,7 @@ class _CreateProgramsPageState extends State<CreateProgramsPage> {
   // Remove a set
   void removeSet(int exerciseIndex, int setIndex) {
     setState(() {
-      program?.exercises?[exerciseIndex].sets?.removeAt(setIndex);
+      program.exercises?[exerciseIndex].sets?.removeAt(setIndex);
       _setControllers[exerciseIndex]?.remove(setIndex);
     });
   }
@@ -108,7 +123,22 @@ class _CreateProgramsPageState extends State<CreateProgramsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Stronger",style: Theme.of(context).textTheme.headlineMedium,)),
+      appBar: AppBar(
+        title: Text(
+          "Stronger",
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.save),
+            tooltip: 'Save Program',
+            onPressed: _saveProgram,
+          ),
+          SizedBox(
+            width: 7,
+          )
+        ],
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -118,12 +148,14 @@ class _CreateProgramsPageState extends State<CreateProgramsPage> {
               // Program Title
               TextField(
                 decoration: InputDecoration(labelText: "Program Title"),
-                controller: TextEditingController(text: program?.title,)
-                  ..selection = TextSelection.collapsed(
-                      offset: program!.title.length), // Keep caret position
+                controller: TextEditingController(
+                  text: program.title,
+                )..selection = TextSelection.collapsed(
+                    offset: program.title.length,
+                  ), // Keep caret position
                 onChanged: (value) {
                   setState(() {
-                    program?.title = value;
+                    program.title = value;
                   });
                 },
               ),
@@ -133,9 +165,9 @@ class _CreateProgramsPageState extends State<CreateProgramsPage> {
               ListView.builder(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
-                itemCount: program?.exercises?.length ?? 0,
+                itemCount: program.exercises?.length ?? 0,
                 itemBuilder: (context, exerciseIndex) {
-                  final exercise = program?.exercises![exerciseIndex];
+                  final exercise = program.exercises![exerciseIndex];
                   return Card(
                     margin: EdgeInsets.symmetric(vertical: 8.0),
                     child: Padding(
@@ -151,10 +183,11 @@ class _CreateProgramsPageState extends State<CreateProgramsPage> {
                                 child: TextField(
                                   decoration: InputDecoration(
                                       labelText: "Exercise Title"),
-                                  controller: _exerciseControllers[exerciseIndex],
+                                  controller:
+                                      _exerciseControllers[exerciseIndex],
                                   onChanged: (value) {
                                     setState(() {
-                                      exercise?.title = value;
+                                      exercise.title = value;
                                     });
                                   },
                                 ),
@@ -171,21 +204,22 @@ class _CreateProgramsPageState extends State<CreateProgramsPage> {
                           ListView.builder(
                             shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
-                            itemCount: exercise?.sets?.length ?? 0,
+                            itemCount: exercise.sets?.length ?? 0,
                             itemBuilder: (context, setIndex) {
-                              final set = exercise?.sets![setIndex];
+                              final set = exercise.sets![setIndex];
                               return Row(
                                 children: [
                                   // Reps
                                   Expanded(
                                     child: TextField(
-                                      decoration: InputDecoration(labelText: "Reps"),
+                                      decoration:
+                                          InputDecoration(labelText: "Reps"),
                                       controller: _setControllers[exerciseIndex]
-                                      ?[setIndex],
+                                          ?[setIndex],
                                       keyboardType: TextInputType.number,
                                       onChanged: (value) {
                                         setState(() {
-                                          set?.reps =
+                                          set.reps =
                                               int.tryParse(value) ?? set.reps;
                                         });
                                       },
@@ -196,11 +230,14 @@ class _CreateProgramsPageState extends State<CreateProgramsPage> {
                                   // Set Type
                                   Expanded(
                                     child: TextField(
-                                      decoration: InputDecoration(labelText: "Set Type",),
+                                      decoration: InputDecoration(
+                                        labelText: "Set Type",
+                                      ),
                                       controller: TextEditingController(
-                                          text: set?.type)
-                                        ..selection = TextSelection.collapsed(
-                                            offset: set!.type.length),
+                                        text: set.type,
+                                      )..selection = TextSelection.collapsed(
+                                          offset: set.type.length,
+                                        ),
                                       onChanged: (value) {
                                         setState(() {
                                           set.type = value;
@@ -213,7 +250,7 @@ class _CreateProgramsPageState extends State<CreateProgramsPage> {
                                     onPressed: () =>
                                         removeSet(exerciseIndex, setIndex),
                                   ),
-                                  SizedBox(height: 60),
+                                  SizedBox(height: 60,)
                                 ],
                               );
                             },
@@ -224,8 +261,17 @@ class _CreateProgramsPageState extends State<CreateProgramsPage> {
                           TextButton.icon(
                             onPressed: () => addSet(exerciseIndex),
                             icon: Icon(Icons.add),
-                            label: Text("Add Set",style: TextStyle(color: AppTheme.colorDark1),),
-                            style: ButtonStyle(iconColor: WidgetStatePropertyAll(AppTheme.colorDark1.withOpacity(0.5))),
+                            label: Text(
+                              "Add Set",
+                              style: TextStyle(
+                                color: AppTheme.colorDark1,
+                              ),
+                            ),
+                            style: ButtonStyle(
+                              iconColor: WidgetStateProperty.all(
+                                AppTheme.colorDark1.withOpacity(0.5),
+                              ),
+                            ),
                           ),
                         ],
                       ),

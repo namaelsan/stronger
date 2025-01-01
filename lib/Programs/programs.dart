@@ -25,7 +25,34 @@ class _ProgramsPageState extends State<ProgramsPage> {
   //   {"title": "Upper Body Blitz", "movements": 10, "sets": 30},
   // ];
 
-  var templatePrograms = [
+  List<Program> userPrograms = [
+    Program("Beginner program",
+        description: "Start your fitness journey",
+        exercises: [
+          Exercise("Chest Press", sets: [
+            Set(15, "Warmup"),
+            Set(5, "Drop"),
+          ]),
+        ]),
+    Program("Strength Focus",
+        description: "Build power and strength",
+        exercises: [
+          Exercise("Chest Press", sets: [
+            Set(15, "Warmup"),
+            Set(5, "Drop"),
+          ]),
+        ]),
+    Program("Strength Focustemp",
+        description: "Build power and strength",
+        exercises: [
+          Exercise("Chest Press", sets: [
+            Set(15, "Warmup"),
+            Set(5, "Drop"),
+          ]),
+        ]),
+  ];
+
+  List<Program> templatePrograms = [
     Program("Beginner program",
         description: "Start your fitness journey",
         exercises: [
@@ -73,6 +100,27 @@ class _ProgramsPageState extends State<ProgramsPage> {
         ])
   ];
 
+  void navigateToCreateProgram(List<Program> programs, int index,bool isNew) async {
+    Program updatedProgram = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CreateProgramsPage(
+          programs: programs,
+          index: index,
+          isNew: isNew,
+        ),
+      ),
+    );
+
+      setState(() {
+        if (isNew) {
+          userPrograms.add(updatedProgram.copy());
+        }else{
+          userPrograms[index] = updatedProgram; // Update the program list
+        }
+      });
+  }
+
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
@@ -80,8 +128,7 @@ class _ProgramsPageState extends State<ProgramsPage> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => CreateProgramsPage()));
+          navigateToCreateProgram(userPrograms, -1, true);
         },
         child: Icon(
           Icons.add,
@@ -131,14 +178,7 @@ class _ProgramsPageState extends State<ProgramsPage> {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
-                        // print('Tapped on: ${templatePrograms[index].title}');
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CreateProgramsPage(
-                                program: templatePrograms[index]),
-                          ),
-                        );
+                        navigateToCreateProgram(templatePrograms, index, true);
                       },
                       child: Card(
                         margin: EdgeInsets.symmetric(horizontal: 8.0),
@@ -185,21 +225,16 @@ class _ProgramsPageState extends State<ProgramsPage> {
               ListView.builder(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
-                itemCount: templatePrograms.length,
+                itemCount: userPrograms.length,
                 itemBuilder: (context, index) {
                   return Card(
                     margin: EdgeInsets.symmetric(vertical: 8.0),
                     child: ListTile(
-                      title: Text(templatePrograms[index].title),
+                      title: Text(userPrograms[index].title),
                       subtitle: Text(
-                          "${templatePrograms[index].getExerciseAmount()} Movements · ${templatePrograms[index].getSetAmount()} Sets"),
+                          "${userPrograms[index].getExerciseAmount()} Movements · ${userPrograms[index].getSetAmount()} Sets"),
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => CreateProgramsPage(
-                                      program: templatePrograms[index],
-                                    )));
+                        navigateToCreateProgram(userPrograms, index, false);
                       },
                     ),
                   );
@@ -220,6 +255,29 @@ class Set {
   int? weight;
 
   Set(this.reps, this.type, {this.weight});
+
+  // Convert to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'reps': reps,
+      'type': type,
+      'weight': weight,
+    };
+  }
+
+  // Create from JSON
+  factory Set.fromJson(Map<String, dynamic> json) {
+    return Set(
+      json['reps'],
+      json['type'],
+      weight: json['weight'],
+    );
+  }
+
+  // Deep copy
+  Set copy() {
+    return Set(reps, type, weight: weight);
+  }
 }
 
 // Class representing an Exercise
@@ -228,6 +286,32 @@ class Exercise {
   String title;
 
   Exercise(this.title, {this.sets});
+
+  // Convert to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'sets': sets?.map((set) => set.toJson()).toList(),
+    };
+  }
+
+  // Create from JSON
+  factory Exercise.fromJson(Map<String, dynamic> json) {
+    return Exercise(
+      json['title'],
+      sets: (json['sets'] as List<dynamic>?)
+          ?.map((set) => Set.fromJson(set as Map<String, dynamic>))
+          .toList(),
+    );
+  }
+
+  // Deep copy
+  Exercise copy() {
+    return Exercise(
+      title,
+      sets: sets?.map((set) => set.copy()).toList(),
+    );
+  }
 }
 
 // Class representing a Program
@@ -238,6 +322,36 @@ class Program {
 
   Program(this.title, {this.exercises, this.description});
 
+  // Convert to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'description': description,
+      'exercises': exercises?.map((exercise) => exercise.toJson()).toList(),
+    };
+  }
+
+  // Create from JSON
+  factory Program.fromJson(Map<String, dynamic> json) {
+    return Program(
+      json['title'],
+      description: json['description'],
+      exercises: (json['exercises'] as List<dynamic>?)
+          ?.map((exercise) => Exercise.fromJson(exercise as Map<String, dynamic>))
+          .toList(),
+    );
+  }
+
+  // Deep copy
+  Program copy() {
+    return Program(
+      title,
+      description: description,
+      exercises: exercises?.map((exercise) => exercise.copy()).toList(),
+    );
+  }
+
+  // Get total set amount
   int getSetAmount() {
     int setAmount = 0;
     if (exercises != null) {
@@ -248,7 +362,9 @@ class Program {
     return setAmount;
   }
 
-  int? getExerciseAmount() {
-    return exercises?.length;
+  // Get total exercise amount
+  int getExerciseAmount() {
+    return exercises?.length ?? 0;
   }
 }
+
