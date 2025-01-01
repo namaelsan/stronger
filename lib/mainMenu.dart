@@ -38,8 +38,8 @@ class _MainMenuState extends State<MainMenu>{
           },
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: "Programs"),
-            BottomNavigationBarItem(icon: Icon(Icons.home),label: "Graphs"),
-            BottomNavigationBarItem(icon: Icon(Icons.home),label: "Settings"),
+            BottomNavigationBarItem(icon: Icon(Icons.bar_chart),label: "Graphs"),
+            BottomNavigationBarItem(icon: Icon(Icons.settings),label: "Settings"),
           ],
       ),
     );
