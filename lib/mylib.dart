@@ -20,6 +20,7 @@ class AppTheme{
     inputDecorationTheme: _InputDecorationTheme.myInputDecorationTheme,
     bottomNavigationBarTheme: _BottomNavigationBarThemeData.myBottomNavigationBarThemeData,
     cardTheme: _CardTheme.myCardTheme,
+    floatingActionButtonTheme: _FloatingActionButtonTheme.myFloatingActionButtonThemeData,
   );
 }
 
@@ -134,5 +135,16 @@ class _CardTheme{
 
   static CardTheme myCardTheme = CardTheme(
     color: AppTheme.colorLight2
+  );
+}
+
+class _FloatingActionButtonTheme{
+  _FloatingActionButtonTheme._();
+
+  static FloatingActionButtonThemeData myFloatingActionButtonThemeData = FloatingActionButtonThemeData(
+    backgroundColor: AppTheme.colorDark1,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+    ),
   );
 }

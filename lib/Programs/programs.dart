@@ -19,11 +19,11 @@ class _ProgramsPageState extends State<ProgramsPage> {
   //   {"title": "Hypertrophy Plan", "description": "For muscle growth"},
   // ];
 
-  final List<Map<String, dynamic>> userPrograms = [
-    {"title": "Custom Plan A", "movements": 12, "sets": 40},
-    {"title": "Leg Day Special", "movements": 8, "sets": 25},
-    {"title": "Upper Body Blitz", "movements": 10, "sets": 30},
-  ];
+  // final List<Map<String, dynamic>> userPrograms = [
+  //   {"title": "Custom Plan A", "movements": 12, "sets": 40},
+  //   {"title": "Leg Day Special", "movements": 8, "sets": 25},
+  //   {"title": "Upper Body Blitz", "movements": 10, "sets": 30},
+  // ];
 
   var templatePrograms = [
     Program("Beginner program",
@@ -78,6 +78,16 @@ class _ProgramsPageState extends State<ProgramsPage> {
     var screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => CreateProgramsPage()));
+        },
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(16.0),
@@ -119,38 +129,52 @@ class _ProgramsPageState extends State<ProgramsPage> {
                   scrollDirection: Axis.horizontal,
                   itemCount: templatePrograms.length,
                   itemBuilder: (context, index) {
-                    return Card(
-                      margin: EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Container(
-                        width: screenSize.width * 0.38,
-                        padding: EdgeInsets.all(16),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              templatePrograms[index].title,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(color: Colors.black),
-                            ),
-                            SizedBox(height: 10),
-                            Text(
-                              templatePrograms[index].description ??
-                                  "Description here",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(color: Colors.black),
-                            ),
-                          ],
+                    return GestureDetector(
+                      onTap: () {
+                        // print('Tapped on: ${templatePrograms[index].title}');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CreateProgramsPage(
+                                program: templatePrograms[index]),
+                          ),
+                        );
+                      },
+                      child: Card(
+                        margin: EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Container(
+                          width: screenSize.width * 0.38,
+                          padding: EdgeInsets.all(16),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                templatePrograms[index].title,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium
+                                    ?.copyWith(color: Colors.black),
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                templatePrograms[index].description ??
+                                    "Description here",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                        color: Colors.black.withOpacity(0.6)),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     );
                   },
                 ),
               ),
+
               SizedBox(height: 20),
               // User Programs Section
               Text(

@@ -37,7 +37,7 @@ class _MainMenuState extends State<MainMenu>{
             });
           },
           items: [
-            BottomNavigationBarItem(icon: Icon(Icons.home),label: "Programs"),
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Programs"),
             BottomNavigationBarItem(icon: Icon(Icons.home),label: "Graphs"),
             BottomNavigationBarItem(icon: Icon(Icons.home),label: "Settings"),
           ],
