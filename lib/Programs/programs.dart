@@ -12,18 +12,6 @@ class ProgramsPage extends StatefulWidget {
 }
 
 class _ProgramsPageState extends State<ProgramsPage> {
-  // // Dummy data for template programs and user programs
-  // final List<Map<String, String>> templates = [
-  //   {"title": "Beginner Program", "description": "Start your fitness journey"},
-  //   {"title": "Strength Focus", "description": "Build power and strength"},
-  //   {"title": "Hypertrophy Plan", "description": "For muscle growth"},
-  // ];
-
-  // final List<Map<String, dynamic>> userPrograms = [
-  //   {"title": "Custom Plan A", "movements": 12, "sets": 40},
-  //   {"title": "Leg Day Special", "movements": 8, "sets": 25},
-  //   {"title": "Upper Body Blitz", "movements": 10, "sets": 30},
-  // ];
 
   List<Program> userPrograms = [
     Program("Beginner program",
@@ -100,8 +88,9 @@ class _ProgramsPageState extends State<ProgramsPage> {
         ])
   ];
 
-  void navigateToCreateProgram(List<Program> programs, int index,bool isNew) async {
-    Program updatedProgram = await Navigator.push(
+  void navigateToCreateProgram(List<Program> programs, int index,
+      {required bool isNew}) async {
+    var updatedProgram = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => CreateProgramsPage(
@@ -112,13 +101,20 @@ class _ProgramsPageState extends State<ProgramsPage> {
       ),
     );
 
-      setState(() {
-        if (isNew) {
-          userPrograms.add(updatedProgram.copy());
-        }else{
-          userPrograms[index] = updatedProgram; // Update the program list
-        }
-      });
+    if (updatedProgram == null) {
+      return;
+    }
+    setState(() {
+      if (isNew) {
+        userPrograms.add(updatedProgram.copy());
+      } else {
+        userPrograms[index] = updatedProgram; // Update the program list
+      }
+    });
+  }
+
+  void navigateToStartWorkout(Program program) {
+
   }
 
   @override
@@ -128,7 +124,7 @@ class _ProgramsPageState extends State<ProgramsPage> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          navigateToCreateProgram(userPrograms, -1, true);
+          navigateToCreateProgram(userPrograms, -1, isNew: true);
         },
         child: Icon(
           Icons.add,
@@ -142,6 +138,7 @@ class _ProgramsPageState extends State<ProgramsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: screenSize.height * 0.035),
+
               // Page Title
               Center(
                 child: Stack(
@@ -164,6 +161,7 @@ class _ProgramsPageState extends State<ProgramsPage> {
                 ),
               ),
               SizedBox(height: 20),
+
               // Template Programs Section
               Text(
                 "Templates",
@@ -178,7 +176,8 @@ class _ProgramsPageState extends State<ProgramsPage> {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
-                        navigateToCreateProgram(templatePrograms, index, true);
+                        navigateToCreateProgram(templatePrograms, index,
+                            isNew: true);
                       },
                       child: Card(
                         margin: EdgeInsets.symmetric(horizontal: 8.0),
@@ -214,8 +213,8 @@ class _ProgramsPageState extends State<ProgramsPage> {
                   },
                 ),
               ),
-
               SizedBox(height: 20),
+
               // User Programs Section
               Text(
                 "Your Programs",
@@ -232,9 +231,18 @@ class _ProgramsPageState extends State<ProgramsPage> {
                     child: ListTile(
                       title: Text(userPrograms[index].title),
                       subtitle: Text(
-                          "${userPrograms[index].getExerciseAmount()} Movements · ${userPrograms[index].getSetAmount()} Sets"),
+                        "${userPrograms[index].getExerciseAmount()} Movements · ${userPrograms[index].getSetAmount()} Sets",
+                      ),
+                      trailing: IconButton(
+                        icon: Icon(Icons.edit, color: AppTheme.colorDark1),
+                        tooltip: 'Edit Program',
+                        onPressed: () {
+                          navigateToCreateProgram(userPrograms, index,
+                              isNew: false);
+                        },
+                      ),
                       onTap: () {
-                        navigateToCreateProgram(userPrograms, index, false);
+                        navigateToStartWorkout(userPrograms[index]);
                       },
                     ),
                   );
@@ -337,7 +345,8 @@ class Program {
       json['title'],
       description: json['description'],
       exercises: (json['exercises'] as List<dynamic>?)
-          ?.map((exercise) => Exercise.fromJson(exercise as Map<String, dynamic>))
+          ?.map(
+              (exercise) => Exercise.fromJson(exercise as Map<String, dynamic>))
           .toList(),
     );
   }
@@ -367,4 +376,3 @@ class Program {
     return exercises?.length ?? 0;
   }
 }
-
