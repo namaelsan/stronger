@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:stronger/workouts.dart';
 import 'login.dart';
 import 'mylib.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => WorkoutProvider(), // Provide the WorkoutProvider
+      child: MyApp(),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget{
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
@@ -15,6 +22,8 @@ class MyApp extends StatelessWidget{
       theme: AppTheme.myTheme,
       title: "Stronger",
       debugShowCheckedModeBanner: false,
-      home: const LoginPage(),);
+      home: const LoginPage(),
+    );
   }
 }
+

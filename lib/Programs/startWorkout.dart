@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../init.dart';
+import '../workouts.dart';
 import 'programs.dart';
 import 'package:stronger/mylib.dart';
+import 'dart:async'; // Import for Timer
 
 class StartWorkout extends StatefulWidget {
   final Program program;
@@ -20,15 +24,21 @@ class _StartWorkoutState extends State<StartWorkout> {
   final Map<int, TextEditingController> _exerciseControllers = {};
   final Map<int, Map<int, TextEditingController>> _setControllers = {};
 
+  // Timer variables
+  late Timer _timer;
+  int _secondsElapsed = 0;
+
+  // Track changes
+  bool _hasChanges = false;
+
   _StartWorkoutState(this.programExt);
 
   @override
   void initState() {
     super.initState();
-
     program = programExt.copy();
-
     _initializeControllers();
+    _startTimer(); // Start the timer when the workout begins
   }
 
   // Initialize controllers for exercises and sets
@@ -47,10 +57,93 @@ class _StartWorkoutState extends State<StartWorkout> {
     }
   }
 
-  // Save the program
+  // Start the timer
+  void _startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        _secondsElapsed++;
+      });
+    });
+  }
+
+  // Stop the timer
+  void _stopTimer() {
+    _timer.cancel();
+  }
+
+  // Format the timer (HH:MM:SS)
+  String _formatTimer(int seconds) {
+    int hours = seconds ~/ 3600;
+    int minutes = (seconds % 3600) ~/ 60;
+    int secs = seconds % 60;
+    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
+  }
+
+  @override
+  void dispose() {
+    _stopTimer(); // Stop the timer when the widget is disposed
+    super.dispose();
+  }
+
+  // Save the program and stop the timer
   void _saveProgram() {
-    // Pass the updated program back
-    Navigator.pop(context, program);
+    _stopTimer();
+
+    final workoutProvider =
+        Provider.of<WorkoutProvider>(context, listen: false);
+
+    if (_hasChanges) {
+      // Show a dialog if changes were made
+      _showSaveConfirmationDialog(workoutProvider);
+    } else {
+      // Save the workout directly if no changes were made
+      workoutProvider.addWorkout(program.copy());
+      Navigator.pop(context, program);
+    }
+  }
+
+  // Show a confirmation dialog to update the program
+  void _showSaveConfirmationDialog(WorkoutProvider workoutProvider) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Save Changes?",
+              style: AppTheme.myTheme.textTheme.headlineSmall
+                  ?.copyWith(color: Colors.black)),
+          content: Text(
+              "You've made changes to the program. Do you want to update the program with these changes?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                // Save the workout and update the program
+                workoutProvider.addWorkout(program.copy());
+                Navigator.of(context).pop(); // Close the dialog
+                Navigator.pop(context,
+                    program); // Return the updated program to the ProgramsPage
+              },
+              child: Text("Update Program"),
+            ),
+            TextButton(
+              onPressed: () {
+                // Save the workout without updating the program
+                workoutProvider.addWorkout(programExt.copy());
+                Navigator.of(context).pop(); // Close the dialog
+                Navigator.pop(context,
+                    programExt); // Return the original program to the ProgramsPage
+              },
+              child: Text("Discard Changes"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   // Add an exercise
@@ -69,6 +162,8 @@ class _StartWorkoutState extends State<StartWorkout> {
       _setControllers[index] = {
         0: TextEditingController(text: "10"),
       };
+
+      _hasChanges = true; // Track changes
     });
   }
 
@@ -83,6 +178,8 @@ class _StartWorkoutState extends State<StartWorkout> {
       _setControllers[exerciseIndex]?[setIndex] = TextEditingController(
         text: "10",
       );
+
+      _hasChanges = true; // Track changes
     });
   }
 
@@ -92,7 +189,9 @@ class _StartWorkoutState extends State<StartWorkout> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Remove Exercise",style: AppTheme.myTheme.textTheme.headlineSmall?.copyWith(color: Colors.black),),
+          title: Text("Remove Exercise",
+              style: AppTheme.myTheme.textTheme.headlineSmall
+                  ?.copyWith(color: Colors.black)),
           content: Text("Are you sure you want to remove this exercise?"),
           actions: [
             TextButton(
@@ -107,6 +206,8 @@ class _StartWorkoutState extends State<StartWorkout> {
                   program.exercises?.removeAt(index);
                   _exerciseControllers.remove(index);
                   _setControllers.remove(index);
+
+                  _hasChanges = true; // Track changes
                 });
                 Navigator.of(context).pop(); // Close the dialog
               },
@@ -118,14 +219,15 @@ class _StartWorkoutState extends State<StartWorkout> {
     );
   }
 
-
   // Remove a set
   void removeSet(int exerciseIndex, int setIndex) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Remove Set",style: AppTheme.myTheme.textTheme.headlineSmall?.copyWith(color: Colors.black),),
+          title: Text("Remove Set",
+              style: AppTheme.myTheme.textTheme.headlineSmall
+                  ?.copyWith(color: Colors.black)),
           content: Text("Are you sure you want to remove this set?"),
           actions: [
             TextButton(
@@ -139,6 +241,8 @@ class _StartWorkoutState extends State<StartWorkout> {
                 setState(() {
                   program.exercises?[exerciseIndex].sets?.removeAt(setIndex);
                   _setControllers[exerciseIndex]?.remove(setIndex);
+
+                  _hasChanges = true; // Track changes
                 });
                 Navigator.of(context).pop(); // Close the dialog
               },
@@ -150,7 +254,6 @@ class _StartWorkoutState extends State<StartWorkout> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -160,6 +263,15 @@ class _StartWorkoutState extends State<StartWorkout> {
           style: Theme.of(context).textTheme.headlineMedium,
         ),
         actions: [
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: Text(
+                _formatTimer(_secondsElapsed), // Display the timer
+                style: TextStyle(fontSize: 18, color: Colors.white),
+              ),
+            ),
+          ),
           IconButton(
             icon: Icon(Icons.save),
             tooltip: 'Save Program',
@@ -176,19 +288,18 @@ class _StartWorkoutState extends State<StartWorkout> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 10,),
+              SizedBox(height: 10),
               // Program Title
               Stack(
                 children: [
                   Text(
                     program.title,
-                    style:
-                    Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      foreground: Paint()
-                        ..style = PaintingStyle.stroke
-                        ..strokeWidth = 7
-                        ..color = AppTheme.colorDark1,
-                    ),
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          foreground: Paint()
+                            ..style = PaintingStyle.stroke
+                            ..strokeWidth = 7
+                            ..color = AppTheme.colorDark1,
+                        ),
                   ),
                   Text(
                     program.title,
@@ -221,7 +332,7 @@ class _StartWorkoutState extends State<StartWorkout> {
                                   decoration: InputDecoration(
                                       labelText: "Exercise Title"),
                                   controller:
-                                  _exerciseControllers[exerciseIndex],
+                                      _exerciseControllers[exerciseIndex],
                                   onChanged: (value) {
                                     setState(() {
                                       exercise.title = value;
@@ -250,9 +361,9 @@ class _StartWorkoutState extends State<StartWorkout> {
                                   Expanded(
                                     child: TextField(
                                       decoration:
-                                      InputDecoration(labelText: "Reps"),
+                                          InputDecoration(labelText: "Reps"),
                                       controller: _setControllers[exerciseIndex]
-                                      ?[setIndex],
+                                          ?[setIndex],
                                       keyboardType: TextInputType.number,
                                       onChanged: (value) {
                                         setState(() {
@@ -275,26 +386,26 @@ class _StartWorkoutState extends State<StartWorkout> {
                                       },
                                       decoration: InputDecoration(
                                         labelText: "Set Type",
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(8.0), // Rounded corners
-                                          borderSide: BorderSide(
-                                            color: Colors.grey, // Border color
-                                            width: 1.0, // Border width
-                                          ),
-                                        ),
+                                        border: OutlineInputBorder(),
                                       ),
                                       items: [
                                         DropdownMenuItem<String>(
                                           value: "Warmup",
-                                          child: Text("Warmup",style: AppTheme.myTheme.textTheme.bodyMedium,),
+                                          child: Text("Warmup",
+                                              style: AppTheme.myTheme.textTheme
+                                                  .bodyMedium),
                                         ),
                                         DropdownMenuItem<String>(
                                           value: "Drop",
-                                          child: Text("Drop",style: AppTheme.myTheme.textTheme.bodyMedium,),
+                                          child: Text("Drop",
+                                              style: AppTheme.myTheme.textTheme
+                                                  .bodyMedium),
                                         ),
                                         DropdownMenuItem<String>(
                                           value: "Regular",
-                                          child: Text("Regular",style: AppTheme.myTheme.textTheme.bodyMedium,),
+                                          child: Text("Regular",
+                                              style: AppTheme.myTheme.textTheme
+                                                  .bodyMedium),
                                         ),
                                       ],
                                       hint: Text("Select Type"),

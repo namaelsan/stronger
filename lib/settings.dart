@@ -5,11 +5,9 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var screenSize = MediaQuery.of(context).size;
-
     return Scaffold(
-      body: Center(),
+      body: Center(
+      ),
     );
   }
-
 }

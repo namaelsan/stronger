@@ -238,13 +238,7 @@ class _CreateProgramsPageState extends State<CreateProgramsPage> {
                                       },
                                       decoration: InputDecoration(
                                         labelText: "Set Type",
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(8.0), // Rounded corners
-                                          borderSide: BorderSide(
-                                            color: Colors.grey, // Border color
-                                            width: 1.0, // Border width
-                                          ),
-                                        ),
+                                        border: OutlineInputBorder(),
                                       ),
                                       items: [
                                         DropdownMenuItem<String>(

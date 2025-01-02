@@ -26,6 +26,7 @@ class _MainMenuState extends State<MainMenu> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: Text("Stronger",style: Theme.of(context).textTheme.headlineMedium,)),
       body: IndexedStack(
         index: _currentIndex,
         children: _pages,

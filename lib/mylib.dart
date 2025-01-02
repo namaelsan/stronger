@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:stronger/Programs/programs.dart';
 
 class AppTheme{
   AppTheme._();
@@ -22,6 +23,10 @@ class AppTheme{
     cardTheme: _CardTheme.myCardTheme,
     floatingActionButtonTheme: _FloatingActionButtonTheme.myFloatingActionButtonThemeData,
   );
+}
+
+class AppGlobals {
+  static List<Program> pastWorkouts = []; // Global list to store past workouts
 }
 
 class ReusableWidgets {
@@ -97,21 +102,21 @@ class _TextTheme{
   _TextTheme._();
 
   static TextTheme myTextTheme = TextTheme(
-    headlineLarge: const TextStyle().copyWith(fontSize:  32, fontWeight: FontWeight.bold, color: Colors.white),
-    headlineMedium: const TextStyle().copyWith(fontSize:  24, fontWeight: FontWeight.w600, color: Colors.white),
-    headlineSmall: const TextStyle().copyWith(fontSize:  18, fontWeight: FontWeight.w600, color: Colors.white),
+    headlineLarge: const TextStyle().copyWith(fontSize:  32, fontWeight: FontWeight.bold, color: Colors.white.withOpacity(0.9)),
+    headlineMedium: const TextStyle().copyWith(fontSize:  24, fontWeight: FontWeight.w600, color: Colors.white.withOpacity(0.9)),
+    headlineSmall: const TextStyle().copyWith(fontSize:  18, fontWeight: FontWeight.w600, color: Colors.white.withOpacity(0.9)),
 
-    titleLarge: const TextStyle().copyWith(fontSize:  16, fontWeight: FontWeight.w600, color: Colors.white),
-    titleMedium: const TextStyle().copyWith(fontSize:  16, fontWeight: FontWeight.w500, color: Colors.white),
-    titleSmall: const TextStyle().copyWith(fontSize:  16, fontWeight: FontWeight.w400, color: Colors.white),
+    titleLarge: const TextStyle().copyWith(fontSize:  16, fontWeight: FontWeight.w600, color: Colors.white.withOpacity(0.9)),
+    titleMedium: const TextStyle().copyWith(fontSize:  16, fontWeight: FontWeight.w500, color: Colors.white.withOpacity(0.9)),
+    titleSmall: const TextStyle().copyWith(fontSize:  16, fontWeight: FontWeight.w400, color: Colors.white.withOpacity(0.9)),
 
     bodyLarge: const TextStyle().copyWith(fontSize:  14, fontWeight: FontWeight.w500, color: Colors.black,),
     bodyMedium: const TextStyle().copyWith(fontSize:  14, fontWeight: FontWeight.normal, color: Colors.black),
     bodySmall: const TextStyle().copyWith(fontSize:  14, fontWeight: FontWeight.w500, color: Colors.black),
 
-    labelLarge: const TextStyle().copyWith(fontSize:  12, fontWeight: FontWeight.normal, color: Colors.white),
-    labelMedium: const TextStyle().copyWith(fontSize:  12, fontWeight: FontWeight.normal, color: Colors.white),
-    labelSmall: const TextStyle().copyWith(fontSize:  12, fontWeight: FontWeight.normal, color: Colors.white),
+    labelLarge: const TextStyle().copyWith(fontSize:  12, fontWeight: FontWeight.normal, color: Colors.white.withOpacity(0.9)),
+    labelMedium: const TextStyle().copyWith(fontSize:  12, fontWeight: FontWeight.normal, color: Colors.white.withOpacity(0.9)),
+    labelSmall: const TextStyle().copyWith(fontSize:  12, fontWeight: FontWeight.normal, color: Colors.white.withOpacity(0.9)),
   );
 }
 
@@ -127,7 +132,7 @@ class _BottomNavigationBarThemeData{
 
   static BottomNavigationBarThemeData myBottomNavigationBarThemeData = BottomNavigationBarThemeData(
     backgroundColor: AppTheme.colorDark1,
-    selectedItemColor: Colors.white, // Set your desired selected item color
+    selectedItemColor: Colors.white.withOpacity(0.9), // Set your desired selected item color
     unselectedItemColor: Colors.grey,
   );
 }

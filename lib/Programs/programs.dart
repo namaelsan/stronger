@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:stronger/Programs/startWorkout.dart';
 import '../mylib.dart';
 import 'createPrograms.dart';
 
@@ -113,8 +114,24 @@ class _ProgramsPageState extends State<ProgramsPage> {
     });
   }
 
-  void navigateToStartWorkout(Program program) {
+  void navigateToStartWorkout(List<Program> programs, int index,) async {
+    var updatedProgram = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => StartWorkout(
+          program: programs[index],
+        ),
+      ),
+    );
 
+    if (updatedProgram == null) {
+      print("123");
+      return;
+    }
+    print("1235");
+    setState(() {
+        programs[index] = updatedProgram.copy(); // Update the program list
+    });
   }
 
   @override
@@ -165,7 +182,10 @@ class _ProgramsPageState extends State<ProgramsPage> {
               // Template Programs Section
               Text(
                 "Templates",
-                style: Theme.of(context).textTheme.headlineSmall,
+                style: AppTheme.myTheme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'YourCustomFont',
+                )
               ),
               SizedBox(height: 10),
               SizedBox(
@@ -218,7 +238,10 @@ class _ProgramsPageState extends State<ProgramsPage> {
               // User Programs Section
               Text(
                 "Your Programs",
-                style: Theme.of(context).textTheme.headlineSmall,
+                style: AppTheme.myTheme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'YourCustomFont',
+                )
               ),
               // TODO: CHANGE THIS BUILDER FROM TEMPLATE TO ACTUAL PROGRAMS
               ListView.builder(
@@ -242,7 +265,7 @@ class _ProgramsPageState extends State<ProgramsPage> {
                         },
                       ),
                       onTap: () {
-                        navigateToStartWorkout(userPrograms[index]);
+                        navigateToStartWorkout(userPrograms,index);
                       },
                     ),
                   );
@@ -259,6 +282,7 @@ class _ProgramsPageState extends State<ProgramsPage> {
 // Class representing a Set
 class Set {
   int reps;
+  int prevWorkoutRep = 0;
   String type;
   int? weight;
 
@@ -327,6 +351,7 @@ class Program {
   List<Exercise>? exercises;
   String? description;
   String title;
+  int time = -1;
 
   Program(this.title, {this.exercises, this.description});
 
