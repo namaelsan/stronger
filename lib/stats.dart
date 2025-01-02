@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'mylib.dart';
 
 class StatsPage extends StatefulWidget{
   const StatsPage({super.key});
@@ -14,8 +15,10 @@ class _StatsPageState extends State<StatsPage>{
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
 
-    return Center(
+    return ReusableWidgets.myBackgroundGradient(
+      Center(
 
+      ),
     );
   }
 
