@@ -180,12 +180,25 @@ class _ProgramsPageState extends State<ProgramsPage> {
               SizedBox(height: 20),
 
               // Template Programs Section
-              Text(
-                "Templates",
-                style: AppTheme.myTheme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'YourCustomFont',
-                )
+              Card(
+                elevation: 4,
+                margin: EdgeInsets.symmetric(vertical: 8),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(7, 2, 7, 2),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                          "Templates",
+                          style: AppTheme.myTheme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'YourCustomFont',
+                            color: AppTheme.colorDark1
+                          )
+                      ),
+                    ],
+                  ),
+                ),
               ),
               SizedBox(height: 10),
               SizedBox(
@@ -236,12 +249,25 @@ class _ProgramsPageState extends State<ProgramsPage> {
               SizedBox(height: 20),
 
               // User Programs Section
-              Text(
-                "Your Programs",
-                style: AppTheme.myTheme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'YourCustomFont',
-                )
+              Card(
+                elevation: 4,
+                margin: EdgeInsets.symmetric(vertical: 8),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(7, 2, 7, 2),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                          "Your Programs",
+                          style: AppTheme.myTheme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'YourCustomFont',
+                            color: AppTheme.colorDark1
+                          )
+                      ),
+                    ],
+                  ),
+                ),
               ),
               // TODO: CHANGE THIS BUILDER FROM TEMPLATE TO ACTUAL PROGRAMS
               ListView.builder(
