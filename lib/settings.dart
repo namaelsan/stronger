@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'mylib.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -6,7 +7,9 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
+      body: ReusableWidgets.myBackgroundGradient(
+        Center(
+        ),
       ),
     );
   }
