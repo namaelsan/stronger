@@ -72,6 +72,19 @@ class ReusableWidgets {
       return oldValue; // Reject the new input if it doesn't match
     });
   }
+
+  static Container myBackgroundGradient(Widget child){
+    return Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [AppTheme.colorDark2, AppTheme.colorLight2],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: child
+    );
+  }
 }
 
 
