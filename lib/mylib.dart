@@ -126,7 +126,9 @@ class _BottomNavigationBarThemeData{
   _BottomNavigationBarThemeData._();
 
   static BottomNavigationBarThemeData myBottomNavigationBarThemeData = BottomNavigationBarThemeData(
-    backgroundColor: AppTheme.colorDark1
+    backgroundColor: AppTheme.colorDark1,
+    selectedItemColor: Colors.white, // Set your desired selected item color
+    unselectedItemColor: Colors.grey,
   );
 }
 
