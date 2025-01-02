@@ -14,16 +14,19 @@ class StartWorkout extends StatefulWidget {
 }
 
 class _StartWorkoutState extends State<StartWorkout> {
-  Program program;
+  late Program program;
+  Program programExt;
 
   final Map<int, TextEditingController> _exerciseControllers = {};
   final Map<int, Map<int, TextEditingController>> _setControllers = {};
 
-  _StartWorkoutState(this.program);
+  _StartWorkoutState(this.programExt);
 
   @override
   void initState() {
     super.initState();
+
+    program = programExt.copy();
 
     _initializeControllers();
   }
@@ -85,20 +88,68 @@ class _StartWorkoutState extends State<StartWorkout> {
 
   // Remove an exercise
   void removeExercise(int index) {
-    setState(() {
-      program.exercises?.removeAt(index);
-      _exerciseControllers.remove(index);
-      _setControllers.remove(index);
-    });
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Remove Exercise",style: AppTheme.myTheme.textTheme.headlineSmall?.copyWith(color: Colors.black),),
+          content: Text("Are you sure you want to remove this exercise?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  program.exercises?.removeAt(index);
+                  _exerciseControllers.remove(index);
+                  _setControllers.remove(index);
+                });
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text("Remove"),
+            ),
+          ],
+        );
+      },
+    );
   }
+
 
   // Remove a set
   void removeSet(int exerciseIndex, int setIndex) {
-    setState(() {
-      program.exercises?[exerciseIndex].sets?.removeAt(setIndex);
-      _setControllers[exerciseIndex]?.remove(setIndex);
-    });
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Remove Set",style: AppTheme.myTheme.textTheme.headlineSmall?.copyWith(color: Colors.black),),
+          content: Text("Are you sure you want to remove this set?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  program.exercises?[exerciseIndex].sets?.removeAt(setIndex);
+                  _setControllers[exerciseIndex]?.remove(setIndex);
+                });
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text("Remove"),
+            ),
+          ],
+        );
+      },
+    );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -125,19 +176,25 @@ class _StartWorkoutState extends State<StartWorkout> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(height: 10,),
               // Program Title
-              TextField(
-                decoration: InputDecoration(labelText: "Program Title"),
-                controller: TextEditingController(
-                  text: program.title,
-                )..selection = TextSelection.collapsed(
-                  offset: program.title.length,
-                ), // Keep caret position
-                onChanged: (value) {
-                  setState(() {
-                    program.title = value;
-                  });
-                },
+              Stack(
+                children: [
+                  Text(
+                    program.title,
+                    style:
+                    Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      foreground: Paint()
+                        ..style = PaintingStyle.stroke
+                        ..strokeWidth = 7
+                        ..color = AppTheme.colorDark1,
+                    ),
+                  ),
+                  Text(
+                    program.title,
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                ],
               ),
               SizedBox(height: 20),
 
