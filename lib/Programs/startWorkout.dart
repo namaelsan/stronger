@@ -111,6 +111,7 @@ class _StartWorkoutState extends State<StartWorkout> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Colors.white.withOpacity(0.9),
           title: Text("Save Changes?",
               style: AppTheme.myTheme.textTheme.headlineSmall
                   ?.copyWith(color: Colors.black)),
