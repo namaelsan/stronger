@@ -19,7 +19,7 @@ class _MainMenuState extends State<MainMenu> {
   final List<Widget> _pages = [
     ProgramsPage(),
     WorkoutsPage(),
-    StatsPage(),
+    // StatsPage(),
     SettingsPage(),
   ];
 
@@ -42,7 +42,7 @@ class _MainMenuState extends State<MainMenu> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.fitness_center), label: "Programs"),
           BottomNavigationBarItem(icon: Icon(Icons.access_time), label: "Workouts"),
-          BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: "Graphs"),
+          // BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: "Graphs"),
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Settings"),
         ],
       ),
