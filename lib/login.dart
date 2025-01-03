@@ -138,6 +138,14 @@ class _LoginPageState extends State<LoginPage> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
                   color: AppTheme.colorLight2,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2), // Shadow color
+                      blurRadius: 10, // Spread of the shadow
+                      spreadRadius: 2, // How much the shadow extends
+                      offset: Offset(0, 4), // Shadow offset (x, y)
+                    )
+                  ]
                 ),
                 width: screenSize.width * 0.6,
                 child: Padding(

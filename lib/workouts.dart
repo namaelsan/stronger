@@ -48,6 +48,7 @@ class WorkoutsPage extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final workout = workoutProvider.pastWorkouts[index];
                     return Card(
+                      elevation: 4,
                       margin: EdgeInsets.symmetric(vertical: 8.0),
                       child: ListTile(
                         title: Text(workout.title),

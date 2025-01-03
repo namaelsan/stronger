@@ -64,7 +64,7 @@ class SettingsPage extends StatelessWidget {
       builder: (context) {
         return AlertDialog(
           backgroundColor: Colors.white.withOpacity(0.9),
-          title: Text("Change User Credentials",style: AppTheme.myTheme.textTheme.headlineSmall?.copyWith(color: Colors.black),),
+          title: Text("Change User Credentials",style: AppTheme.myTheme.textTheme.headlineMedium?.copyWith(color: Colors.black),),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

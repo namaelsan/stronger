@@ -137,7 +137,7 @@ class _StartWorkoutState extends State<StartWorkout> {
             TextButton(
               onPressed: () {
                 // Save the workout without updating the program
-                workoutProvider.addWorkout(programExt.copy());
+                workoutProvider.addWorkout(program.copy());
                 Navigator.of(context).pop(); // Close the dialog
                 Navigator.pop(context,
                     programExt); // Return the original program to the ProgramsPage
@@ -286,186 +286,189 @@ class _StartWorkoutState extends State<StartWorkout> {
           )
         ],
       ),
-      body: SingleChildScrollView(
-          child: ReusableWidgets.myBackgroundGradient(
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 10),
-              // Program Title
-              Stack(
+      body: ReusableWidgets.myBackgroundGradient(
+        ListView(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    program.title,
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          foreground: Paint()
-                            ..style = PaintingStyle.stroke
-                            ..strokeWidth = 7
-                            ..color = AppTheme.colorDark1,
-                        ),
+                  SizedBox(height: 10),
+                  // Program Title
+                  Stack(
+                    children: [
+                      Text(
+                        program.title,
+                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                              foreground: Paint()
+                                ..style = PaintingStyle.stroke
+                                ..strokeWidth = 7
+                                ..color = AppTheme.colorDark1,
+                            ),
+                      ),
+                      Text(
+                        program.title,
+                        style: Theme.of(context).textTheme.headlineMedium,
+                      ),
+                    ],
                   ),
-                  Text(
-                    program.title,
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
+                  SizedBox(height: 20),
 
-              // Exercises and Sets
-              ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: program.exercises?.length ?? 0,
-                itemBuilder: (context, exerciseIndex) {
-                  final exercise = program.exercises![exerciseIndex];
-                  return Card(
-                    margin: EdgeInsets.symmetric(vertical: 8.0),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Exercise Title
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  // Exercises and Sets
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: program.exercises?.length ?? 0,
+                    itemBuilder: (context, exerciseIndex) {
+                      final exercise = program.exercises![exerciseIndex];
+                      return Card(
+                        margin: EdgeInsets.symmetric(vertical: 8.0),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                child: TextField(
-                                  decoration: InputDecoration(
-                                      labelText: "Exercise Title"),
-                                  controller:
-                                      _exerciseControllers[exerciseIndex],
-                                  onChanged: (value) {
-                                    setState(() {
-                                      exercise.title = value;
-                                    });
-                                  },
-                                ),
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.delete, color: Colors.red),
-                                onPressed: () => removeExercise(exerciseIndex),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 10),
-
-                          // Sets List
-                          ListView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: exercise.sets?.length ?? 0,
-                            itemBuilder: (context, setIndex) {
-                              final set = exercise.sets![setIndex];
-                              return Row(
+                              // Exercise Title
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  // Reps
                                   Expanded(
                                     child: TextField(
-                                      decoration:
-                                          InputDecoration(labelText: "Reps"),
-                                      controller: _setControllers[exerciseIndex]
-                                          ?[setIndex],
-                                      keyboardType: TextInputType.number,
+                                      decoration: InputDecoration(
+                                          labelText: "Exercise Title"),
+                                      controller:
+                                          _exerciseControllers[exerciseIndex],
                                       onChanged: (value) {
                                         setState(() {
-                                          set.reps =
-                                              int.tryParse(value) ?? set.reps;
+                                          exercise.title = value;
                                         });
                                       },
-                                    ),
-                                  ),
-                                  SizedBox(width: 10),
-
-                                  // Set Type Dropdown
-                                  Expanded(
-                                    child: DropdownButtonFormField<String>(
-                                      value: set.type,
-                                      onChanged: (newValue) {
-                                        setState(() {
-                                          set.type = newValue!;
-                                        });
-                                      },
-                                      decoration: InputDecoration(
-                                        labelText: "Set Type",
-                                        border: OutlineInputBorder(),
-                                      ),
-                                      items: [
-                                        DropdownMenuItem<String>(
-                                          value: "Warmup",
-                                          child: Text("Warmup",
-                                              style: AppTheme.myTheme.textTheme
-                                                  .bodyMedium),
-                                        ),
-                                        DropdownMenuItem<String>(
-                                          value: "Drop",
-                                          child: Text("Drop",
-                                              style: AppTheme.myTheme.textTheme
-                                                  .bodyMedium),
-                                        ),
-                                        DropdownMenuItem<String>(
-                                          value: "Regular",
-                                          child: Text("Regular",
-                                              style: AppTheme.myTheme.textTheme
-                                                  .bodyMedium),
-                                        ),
-                                      ],
-                                      hint: Text("Select Type"),
                                     ),
                                   ),
                                   IconButton(
                                     icon: Icon(Icons.delete, color: Colors.red),
-                                    onPressed: () =>
-                                        removeSet(exerciseIndex, setIndex),
+                                    onPressed: () => removeExercise(exerciseIndex),
                                   ),
-                                  SizedBox(
-                                    height: 60,
-                                  )
                                 ],
-                              );
-                            },
-                          ),
+                              ),
+                              SizedBox(height: 10),
 
-                          SizedBox(height: 10),
-                          // Add Set Button
-                          TextButton.icon(
-                            onPressed: () => addSet(exerciseIndex),
-                            icon: Icon(Icons.add),
-                            label: Text(
-                              "Add Set",
-                              style: TextStyle(
-                                color: AppTheme.colorDark1,
+                              // Sets List
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: exercise.sets?.length ?? 0,
+                                itemBuilder: (context, setIndex) {
+                                  final set = exercise.sets![setIndex];
+                                  return Row(
+                                    children: [
+                                      // Reps
+                                      Expanded(
+                                        child: TextField(
+                                          decoration:
+                                              InputDecoration(labelText: "Reps"),
+                                          controller: _setControllers[exerciseIndex]
+                                              ?[setIndex],
+                                          keyboardType: TextInputType.number,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              set.reps =
+                                                  int.tryParse(value) ?? set.reps;
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                      SizedBox(width: 10),
+
+                                      // Set Type Dropdown
+                                      Expanded(
+                                        child: DropdownButtonFormField<String>(
+                                          value: set.type,
+                                          onChanged: (newValue) {
+                                            setState(() {
+                                              set.type = newValue!;
+                                            });
+                                          },
+                                          decoration: InputDecoration(
+                                            labelText: "Set Type",
+                                            border: OutlineInputBorder(),
+                                          ),
+                                          items: [
+                                            DropdownMenuItem<String>(
+                                              value: "Warmup",
+                                              child: Text("Warmup",
+                                                  style: AppTheme.myTheme.textTheme
+                                                      .bodyMedium),
+                                            ),
+                                            DropdownMenuItem<String>(
+                                              value: "Drop",
+                                              child: Text("Drop",
+                                                  style: AppTheme.myTheme.textTheme
+                                                      .bodyMedium),
+                                            ),
+                                            DropdownMenuItem<String>(
+                                              value: "Regular",
+                                              child: Text("Regular",
+                                                  style: AppTheme.myTheme.textTheme
+                                                      .bodyMedium),
+                                            ),
+                                          ],
+                                          hint: Text("Select Type"),
+                                        ),
+                                      ),
+                                      IconButton(
+                                        icon: Icon(Icons.delete, color: Colors.red),
+                                        onPressed: () =>
+                                            removeSet(exerciseIndex, setIndex),
+                                      ),
+                                      SizedBox(
+                                        height: 60,
+                                      )
+                                    ],
+                                  );
+                                },
                               ),
-                            ),
-                            style: ButtonStyle(
-                              iconColor: WidgetStateProperty.all(
-                                AppTheme.colorDark1.withOpacity(0.5),
+
+                              SizedBox(height: 10),
+                              // Add Set Button
+                              TextButton.icon(
+                                onPressed: () => addSet(exerciseIndex),
+                                icon: Icon(Icons.add),
+                                label: Text(
+                                  "Add Set",
+                                  style: TextStyle(
+                                    color: AppTheme.colorDark1,
+                                  ),
+                                ),
+                                style: ButtonStyle(
+                                  iconColor: WidgetStateProperty.all(
+                                    AppTheme.colorDark1.withOpacity(0.5),
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      );
+                    },
+                  ),
+
+                  // Add Exercise Button
+                  SizedBox(height: 20),
+                  Center(
+                    child: ElevatedButton.icon(
+                      onPressed: addExercise,
+                      icon: Icon(Icons.add),
+                      label: Text("Add Exercise"),
                     ),
-                  );
-                },
+                  ),
+                ],
               ),
-
-              // Add Exercise Button
-              SizedBox(height: 20),
-              Center(
-                child: ElevatedButton.icon(
-                  onPressed: addExercise,
-                  icon: Icon(Icons.add),
-                  label: Text("Add Exercise"),
-                ),
               ),
-            ],
-          ),
+          ],
         ),
-      )),
+        )
     );
   }
 }

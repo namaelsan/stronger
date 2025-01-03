@@ -77,7 +77,7 @@ class ReusableWidgets {
     return Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [AppTheme.colorDark2, AppTheme.colorLight2],
+            colors: [AppTheme.colorDark2.withOpacity(0.4), AppTheme.colorLight2],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
