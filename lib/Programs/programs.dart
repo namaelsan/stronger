@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'dart:convert';
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stronger/Programs/startWorkout.dart';
 import '../mylib.dart';
 import 'createPrograms.dart';
@@ -13,6 +17,87 @@ class ProgramsPage extends StatefulWidget {
 }
 
 class _ProgramsPageState extends State<ProgramsPage> {
+  List<Program> userPrograms = [];
+  List<Program> templatePrograms = [
+    Program("Beginner program",
+        description: "Start your fitness journey",
+        exercises: [
+          Exercise("Chest Press", sets: [
+            Set(15, "Warmup"),
+            Set(5, "Drop"),
+          ]),
+        ]),
+    Program("Strength Focus",
+        description: "Build power and strength",
+        exercises: [
+          Exercise("Chest Press", sets: [
+            Set(15, "Warmup"),
+            Set(5, "Drop"),
+          ]),
+        ]),
+    Program("Hypertrophy Program",
+        description: "For muscle growth",
+        exercises: [
+          Exercise("Squat", sets: [Set(15, "Warmup")])
+        ])
+  ];
+
+  String? _currentUser; // Track the current user
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCurrentUser(); // Load the current user and their programs
+  }
+
+  // Load the current user from SharedPreferences
+  Future<void> _loadCurrentUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _currentUser = prefs.getString('currentUser'); // Get the current user
+    });
+    if (_currentUser != null) {
+      await _loadUserPrograms(); // Load programs for the current user
+    }
+  }
+
+  // Load user programs from a JSON file
+  Future<void> _loadUserPrograms() async {
+    if (_currentUser == null) return;
+
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/$_currentUser/userPrograms.json');
+
+      if (await file.exists()) {
+        final contents = await file.readAsString();
+        List<dynamic> programsList = jsonDecode(contents);
+        setState(() {
+          userPrograms =
+              programsList.map((program) => Program.fromJson(program)).toList();
+        });
+      }
+    } catch (e) {
+      print("Error loading user programs: $e");
+    }
+  }
+
+  // Save user programs to a JSON file
+  Future<void> _saveUserPrograms() async {
+    if (_currentUser == null) return;
+
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      Directory('${directory.path}/$_currentUser')
+          .create(); // create parent folder
+      final file = File('${directory.path}/$_currentUser/userPrograms.json');
+
+      String programsJson =
+          jsonEncode(userPrograms.map((p) => p.toJson()).toList());
+      await file.writeAsString(programsJson);
+    } catch (e) {}
+  }
+
   void navigateToCreateProgram(List<Program> programs, int index,
       {required bool isNew}) async {
     var updatedProgram = await Navigator.push(
@@ -35,6 +120,7 @@ class _ProgramsPageState extends State<ProgramsPage> {
       } else {
         userPrograms[index] = updatedProgram; // Update the program list
       }
+      _saveUserPrograms(); // Save the updated list
     });
   }
 
@@ -56,6 +142,7 @@ class _ProgramsPageState extends State<ProgramsPage> {
     }
     setState(() {
       programs[index] = updatedProgram.copy(); // Update the program list
+      _saveUserPrograms(); // Save the updated list
     });
   }
 
@@ -102,7 +189,6 @@ class _ProgramsPageState extends State<ProgramsPage> {
             // Template Programs Section
             Row(mainAxisAlignment: MainAxisAlignment.start, children: [
               Container(
-                // width: screenSize.width * 0.9, // Constrain the width
                 child: Card(
                   elevation: 4,
                   margin: EdgeInsets.symmetric(vertical: 8),
@@ -139,6 +225,7 @@ class _ProgramsPageState extends State<ProgramsPage> {
                           isNew: true);
                     },
                     child: Card(
+                      elevation: 10,
                       margin: EdgeInsets.symmetric(horizontal: 8.0),
                       child: Container(
                         width: screenSize.width * 0.38,
@@ -176,7 +263,6 @@ class _ProgramsPageState extends State<ProgramsPage> {
             // User Programs Section
             Row(mainAxisAlignment: MainAxisAlignment.start, children: [
               Container(
-                // width: screenSize.width * 0.9, // Constrain the width
                 child: Card(
                   elevation: 4,
                   margin: EdgeInsets.symmetric(vertical: 8),
@@ -207,6 +293,7 @@ class _ProgramsPageState extends State<ProgramsPage> {
               itemCount: userPrograms.length,
               itemBuilder: (context, index) {
                 return Card(
+                  elevation: 10,
                   margin: EdgeInsets.symmetric(vertical: 8.0),
                   child: ListTile(
                     title: Text(userPrograms[index].title),
@@ -233,81 +320,6 @@ class _ProgramsPageState extends State<ProgramsPage> {
       ),
     );
   }
-
-  List<Program> userPrograms = [
-    Program("Beginner program",
-        description: "Start your fitness journey",
-        exercises: [
-          Exercise("Chest Press", sets: [
-            Set(15, "Warmup"),
-            Set(5, "Drop"),
-          ]),
-        ]),
-    Program("Strength Focus",
-        description: "Build power and strength",
-        exercises: [
-          Exercise("Chest Press", sets: [
-            Set(15, "Warmup"),
-            Set(5, "Drop"),
-          ]),
-        ]),
-    Program("Strength Focustemp",
-        description: "Build power and strength",
-        exercises: [
-          Exercise("Chest Press", sets: [
-            Set(15, "Warmup"),
-            Set(5, "Drop"),
-          ]),
-        ]),
-  ];
-
-  List<Program> templatePrograms = [
-    Program("Beginner program",
-        description: "Start your fitness journey",
-        exercises: [
-          Exercise("Chest Press", sets: [
-            Set(15, "Warmup"),
-            Set(5, "Drop"),
-          ]),
-        ]),
-    Program("Strength Focus",
-        description: "Build power and strength",
-        exercises: [
-          Exercise("Chest Press", sets: [
-            Set(15, "Warmup"),
-            Set(5, "Drop"),
-          ]),
-        ]),
-    Program("Strength Focustemp",
-        description: "Build power and strength",
-        exercises: [
-          Exercise("Chest Press", sets: [
-            Set(15, "Warmup"),
-            Set(5, "Drop"),
-          ]),
-        ]),
-    Program("Strength Focustemp2",
-        description: "Build power and strength",
-        exercises: [
-          Exercise("Chest Press", sets: [
-            Set(15, "Warmup"),
-            Set(5, "Drop"),
-          ]),
-        ]),
-    Program("Strength Focustemp3",
-        description: "Build power and strength",
-        exercises: [
-          Exercise("Chest Press", sets: [
-            Set(15, "Warmup"),
-            Set(5, "Drop"),
-          ]),
-        ]),
-    Program("Hypertrophy Program",
-        description: "For muscle growth",
-        exercises: [
-          Exercise("Squat", sets: [Set(15, "Warmup")])
-        ])
-  ];
 }
 
 // Class representing a Set
