@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../init.dart';
 import '../workouts.dart';
 import 'programs.dart';
 import 'package:stronger/mylib.dart';
@@ -88,6 +87,10 @@ class _StartWorkoutState extends State<StartWorkout> {
   // Save the program and stop the timer
   void _saveProgram() {
     _stopTimer();
+    program.time = _secondsElapsed; // Save the elapsed time
+    // print(_secondsElapsed);
+    // print(program.time);
+    // print(program.copy().time);
 
     final workoutProvider =
         Provider.of<WorkoutProvider>(context, listen: false);
@@ -283,7 +286,8 @@ class _StartWorkoutState extends State<StartWorkout> {
         ],
       ),
       body: SingleChildScrollView(
-        child: Padding(
+          child: ReusableWidgets.myBackgroundGradient(
+        Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -460,7 +464,7 @@ class _StartWorkoutState extends State<StartWorkout> {
             ],
           ),
         ),
-      ),
+      )),
     );
   }
 }

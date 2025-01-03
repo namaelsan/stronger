@@ -48,7 +48,7 @@ class WorkoutsPage extends StatelessWidget {
                         child: ListTile(
                           title: Text(workout.title),
                           subtitle: Text(
-                            "${workout.getExerciseAmount()} Movements · ${workout.getSetAmount()} Sets · ${workout.time} Seconds",
+                            "${workout.getExerciseAmount()} Movements · ${workout.getSetAmount()} Sets · ${ _formatTimer(workout.time ?? 0)} Seconds",
                           ),
                           onTap: () {
                             // Navigate to a detailed view of the workout if needed
@@ -75,4 +75,12 @@ class WorkoutProvider with ChangeNotifier {
     _pastWorkouts.add(workout);
     notifyListeners(); // Notify listeners to rebuild dependent widgets
   }
+}
+
+// Format the timer (HH:MM:SS)
+String _formatTimer(int seconds) {
+  int hours = seconds ~/ 3600;
+  int minutes = (seconds % 3600) ~/ 60;
+  int secs = seconds % 60;
+  return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
 }
