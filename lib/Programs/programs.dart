@@ -146,6 +146,39 @@ class _ProgramsPageState extends State<ProgramsPage> {
     });
   }
 
+  void _showDeleteDialog(int index) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Remove Program",
+              style: AppTheme.myTheme.textTheme.headlineSmall
+                  ?.copyWith(color: Colors.black)),
+          content: Text(
+              "Are you sure you want to remove this program from your list?"),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Cancel"),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+            TextButton(
+              child: Text("Remove"),
+              onPressed: () {
+                setState(() {
+                  userPrograms.removeAt(index); // Remove the program
+                  _saveUserPrograms(); // Save the updated list
+                });
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
@@ -310,6 +343,9 @@ class _ProgramsPageState extends State<ProgramsPage> {
                     ),
                     onTap: () {
                       navigateToStartWorkout(userPrograms, index);
+                    },
+                    onLongPress: () {
+                      _showDeleteDialog(index); // Show the delete dialog
                     },
                   ),
                 );
