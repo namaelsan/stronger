@@ -148,35 +148,63 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        TextField(
+                        TextFormField(
                           controller: _usernameController,
                           decoration: InputDecoration(
                             labelText: "Username",
                             alignLabelWithHint: true,
                           ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Please enter a username";
+                            }
+                            return null;
+                          },
                         ),
                         SizedBox(height: 15),
-                        TextField(
+                        TextFormField(
                           controller: _emailController,
                           decoration: InputDecoration(
                             labelText: "Email",
                             alignLabelWithHint: true,
                           ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Please enter an email";
+                            }
+                            final emailRegex = RegExp(
+                              r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+                            );
+                            if (!emailRegex.hasMatch(value)) {
+                              return "Please enter a valid email address";
+                            }
+                            return null;
+                          },
                         ),
                         SizedBox(height: 15),
-                        TextField(
+                        TextFormField(
                           controller: _passwordController,
                           obscureText: true,
                           decoration: InputDecoration(
                             labelText: "Password",
                             alignLabelWithHint: true,
                           ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Please enter a password";
+                            }
+                            return null;
+                          },
                         ),
                         SizedBox(height: 40),
                         Container(
                           height: screenSize.height * 0.05,
                           child: ElevatedButton(
-                            onPressed: _register,
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                _register();
+                              }
+                            },
                             child: Text(
                               "REGISTER",
                               style: Theme.of(context).textTheme.labelMedium,
